@@ -40,4 +40,39 @@ const registerUser = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
-module.exports = { registerUser };
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    //check user exists
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
+      res.status(400).json({ message: "Invalid Email or Password" });
+    }
+    //compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      res.status(400).json({ message: "Invalid Password" });
+    }
+    //jwt token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    //return sucess message
+    res.status(200).json({
+      message: "Logged in Sucessfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        createdAt: user.createdAt,
+      },
+      token,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "serverr error" });
+  }
+};
+module.exports = { registerUser, loginUser };
