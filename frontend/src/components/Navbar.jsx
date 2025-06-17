@@ -2,16 +2,25 @@ import React from "react";
 
 const Navbar = () => {
   return (
-    <div className="w-100 p-5 flex justify-between">
-      <div>
-        <h2 className="text-5xl font-extrabold ms-4 p-5">Aina</h2>
+    <nav className="w-full bg-transparent py-5 px-6 md:px-10 flex justify-between items-center">
+      {/* Logo */}
+      <h1 className="text-3xl md:text-4xl font-extrabold text-orange-600 tracking-tight">
+        Aina
+      </h1>
+
+      {/* Nav Links */}
+      <div className="hidden md:flex space-x-8 text-lg font-medium text-gray-800">
+        <a href="#about" className="hover:text-orange-600 transition">
+          About
+        </a>
+        <a href="#features" className="hover:text-orange-600 transition">
+          Features
+        </a>
+        <a href="#contact" className="hover:text-orange-600 transition">
+          Contact
+        </a>
       </div>
-      <div className="text-2xl p-3 me-7 space-x-6 flex ">
-        <h2 className="p-2">About</h2>
-        <h2 className="p-2">Features</h2>
-        <h2 className="p-2">Contact</h2>
-      </div>
-    </div>
+    </nav>
   );
 };
 
