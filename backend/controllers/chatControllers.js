@@ -1,0 +1,117 @@
+require("dotenv").config(); // Optional safeguard
+
+const { InferenceClient } = require("@huggingface/inference");
+const Conversation = require("../models/Conversation");
+const hf = new InferenceClient(process.env.API_KEY);
+ 
+const createConversation = async (req, res) => {
+  try {
+    const { userId: bodyUserId, title } = req.body;
+
+    // 1) Determine userId from auth middleware or request body
+    const userId = req.user?.id || bodyUserId;
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ error: "Unauthorized: No userId provided" });
+    }
+
+    // 2) Create a new conversation document
+    const newConversation = new Conversation({
+      userId,
+      title: title || "Untitled Conversation",
+      messages: [],
+    });
+
+    // 3) Save it to the database
+    await newConversation.save();
+
+    // 4) Return the new conversation
+    res.status(201).json({ conversation: newConversation });
+  } catch (error) {
+    console.error("createConversation error:", error);
+    res.status(500).json({ error: "Failed to create conversation" });
+  }
+};
+
+async function genmerateTherapyResponse(historyMessages, userMessage) {
+  // 1) System prompt
+  const systemMessage = {
+    role: "system",
+    content: `You are Aina, a compassionate AI therapy assistant.
+1. Respond with empathy and validation.
+2. Ask open-ended questions.
+3. Never give medical advice.
+4. Keep responses under 3 sentences.`,
+  };
+
+  // 2) Combine system prompt, past messages, and the new user message
+  const messages = [
+    systemMessage,
+    ...historyMessages.map((m) => ({
+      role: m.role === "user" ? "user" : "assistant",
+      content: m.content.replace(/\n/g, " "),
+    })),
+    { role: "user", content: userMessage },
+  ];
+
+  // 3) Call the Hugging Face chatCompletion API
+  const result = await hf.chatCompletion({
+    model: "mistralai/Mistral-7B-Instruct-v0.3",
+    messages,
+    max_tokens: 200,
+    temperature: 0.7,
+    repetition_penalty: 1.2,
+  });
+
+  // 4) Extract and return the assistant’s reply
+  return result.choices?.[0]?.message?.content ?? "";
+}
+
+const sendMessage = async (req, res) => {
+  try {
+    const { conversationId, message, userId: bodyUserId } = req.body;
+
+    // 1) Determine userId (from auth middleware or body)
+    const userId = req.user?.id || bodyUserId;
+    if (!userId) {
+      return res.status(401).json({ error: "No userId provided" });
+    }
+
+    // 2) Validate required fields
+    if (!conversationId || !message) {
+      return res
+        .status(400)
+        .json({ error: "Missing conversationId or message" });
+    }
+
+    // 3) Load the conversation (scoped to this user)
+    const conversation = await Conversation.findOne({
+      _id: conversationId,
+      userId,
+    });
+    if (!conversation) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+
+    // 4) Generate AI response
+    const aiText = await genmerateTherapyResponse(
+      conversation.messages,
+      message
+    );
+
+    // 5) Append both user and AI messages to history and save
+    conversation.messages.push(
+      { role: "user", content: message },
+      { role: "Aina", content: aiText }
+    );
+    await conversation.save();
+
+    // 6) Return the assistant’s reply
+    res.json({ response: aiText });
+  } catch (error) {
+    console.error("sendMessage error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+module.exports = { createConversation, sendMessage };
