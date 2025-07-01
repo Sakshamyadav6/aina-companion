@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FiMail,
@@ -11,6 +11,8 @@ import {
 } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import { loginUser } from "../../services/axios.service";
+import { useDispatch } from "react-redux";
+import { login } from "../slice/authSlice";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,6 +21,8 @@ const Login = () => {
     password: "",
   });
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -32,6 +36,17 @@ const Login = () => {
     try {
       const response = await loginUser("api/auth/login", formData);
       console.log(response);
+
+      const data = {
+        name: response.user.name,
+        email: response.user.email,
+        image: response.user.image,
+        token: response.token,
+        createdAt: response.user.createdAt,
+        id: response.user.id,
+      };
+      dispatch(login(data));
+      navigate("/chat");
     } catch (error) {
       console.log(error);
     }

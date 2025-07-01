@@ -3,10 +3,11 @@ require("dotenv").config(); // Optional safeguard
 const { InferenceClient } = require("@huggingface/inference");
 const Conversation = require("../models/Conversation");
 const hf = new InferenceClient(process.env.API_KEY);
- 
+const mongoose = require("mongoose");
+
 const createConversation = async (req, res) => {
   try {
-    const { userId: bodyUserId, title } = req.body;
+    const { userId: bodyUserId } = req.body;
 
     // 1) Determine userId from auth middleware or request body
     const userId = req.user?.id || bodyUserId;
@@ -19,7 +20,7 @@ const createConversation = async (req, res) => {
     // 2) Create a new conversation document
     const newConversation = new Conversation({
       userId,
-      title: title || "Untitled Conversation",
+      title: "Untitled Conversation",
       messages: [],
     });
 
@@ -114,4 +115,49 @@ const sendMessage = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-module.exports = { createConversation, sendMessage };
+const getConversation = async (req, res) => {
+  console.log(req);
+  try {
+    const userId = mongoose.Types.ObjectId.createFromHexString(req.params.id);
+    const conversation = await Conversation.find({ userId }).sort({
+      createdAt: -1,
+    });
+    res.status(200).json({
+      message: "Conversation fetched",
+      conversation,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+const getSingleConversation = async (req, res) => {
+  try {
+    const conversationId = req.params.id;
+    const singleconversation = await Conversation.findOne({
+      _id: conversationId,
+      userId: req.user.id,
+    });
+    if (!singleconversation) {
+      res
+        .status(401)
+        .json({ message: "Chat doesnot exist or you don't have access to it" });
+    }
+    res.status(200).json({
+      message: "Conversation fetched sucessfully",
+      singleconversation,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+module.exports = {
+  createConversation,
+  sendMessage,
+  getConversation,
+  getSingleConversation,
+};
