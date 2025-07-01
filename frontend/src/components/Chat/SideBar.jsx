@@ -5,9 +5,16 @@ import {
   FiSettings,
   FiLogOut,
   FiSearch,
+  FiMoreVertical,
+  FiTrash2,
+  FiShare2,
 } from "react-icons/fi";
 import { useSelector } from "react-redux";
-import { createChat, getChat } from "../../../services/axios.service";
+import {
+  createChat,
+  getChat,
+  deleteChat,
+} from "../../../services/axios.service";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function SideBar() {
@@ -16,6 +23,7 @@ export default function SideBar() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(null);
 
   const handleCreateChat = async () => {
     try {
@@ -31,6 +39,18 @@ export default function SideBar() {
     try {
       const response = await getChat("api/chat/getChats", token, id);
       setChats(response.conversation);
+      console.log(response.conversation);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDelete = async (chatId) => {
+    try {
+      const response = await deleteChat("api/chat/delete", chatId, token);
+      console.log(response);
+      navigate("/chat");
+      setChats((prev) => prev.filter((chat) => chat._id !== chatId));
     } catch (error) {
       console.log(error);
     }
@@ -60,7 +80,7 @@ export default function SideBar() {
       .slice(0, 2);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col ">
       {/* Header */}
       <div className="flex-shrink-0 px-6 py-4 border-b bg-white">
         <h2 className="text-xl font-bold text-orange-600">Aina</h2>
@@ -95,7 +115,7 @@ export default function SideBar() {
           <div className="mx-6 my-6 text-gray-400 text-sm">No chats found.</div>
         )}
         {filteredChats.map((conv) => (
-          <div key={conv._id}>
+          <div key={conv._id} className="relative group">
             <button
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition text-left mb-1
                 ${
@@ -121,7 +141,38 @@ export default function SideBar() {
                   )}
                 </div>
               </div>
+              {/* Three dots button */}
+              <a
+                type="button"
+                className="ml-2 p-1 rounded-full hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(menuOpen === conv._id ? null : conv._id);
+                }}
+              >
+                <FiMoreVertical />
+              </a>
             </button>
+            {/* Dropdown menu */}
+            {menuOpen === conv._id && (
+              <div className="absolute right-4 top-12 bg-white border rounded shadow z-10">
+                <button
+                  className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full"
+                  onClick={() => handleDelete(conv._id)}
+                >
+                  <FiTrash2 className="mr-2" /> Delete
+                </button>
+                <button
+                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full"
+                  onClick={() => {
+                    setMenuOpen(null);
+                    alert("Share feature coming soon!");
+                  }}
+                >
+                  <FiShare2 className="mr-2" /> Share
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </nav>

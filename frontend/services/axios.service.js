@@ -89,3 +89,34 @@ export const handleResponse = async (uri, token, data) => {
     throw error;
   }
 };
+export const editTitle = async (uri, id, token, title) => {
+  try {
+    const response = await axios.put(
+      `${import.meta.env.VITE_SERVER_URL}/${uri}/${id}`,
+      { title },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+export const deleteChat = async (uri, id, token) => {
+  try {
+    const response = await axios.delete(
+      `${import.meta.env.VITE_SERVER_URL}/${uri}/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};

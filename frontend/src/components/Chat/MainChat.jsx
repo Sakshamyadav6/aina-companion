@@ -2,8 +2,13 @@ import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import { FaPen, FaCopy, FaCheck, FaReply, FaTimes } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { getSingleChat, handleResponse } from "../../../services/axios.service";
+import {
+  editTitle,
+  getSingleChat,
+  handleResponse,
+} from "../../../services/axios.service";
 import { useParams } from "react-router-dom";
+import { MdOutlineDone } from "react-icons/md";
 
 export default function MainChat() {
   const [title, setTitle] = useState("");
@@ -18,6 +23,8 @@ export default function MainChat() {
   const [replyTo, setReplyTo] = useState(null);
   const [messageReactions, setMessageReactions] = useState({});
   const [userScrolled, setUserScrolled] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -219,18 +226,67 @@ export default function MainChat() {
     const input = document.querySelector('input[type="text"]');
     if (input) input.focus();
   };
+
   const clearReply = () => setReplyTo(null);
+
+  //handle title edit
+  const handleEditTitle = (e) => {
+    e.preventDefault();
+    setEditedTitle(title);
+    setIsEditing(true);
+  };
+  //save edit title
+  const saveEditTitle = async () => {
+    console.log(editedTitle);
+    try {
+      const response = await editTitle(
+        "api/chat/edit",
+        conversationId,
+        token,
+        editedTitle
+      );
+      setTitle(editedTitle);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsEditing(false);
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
       {/* Chat Header */}
       <div className="flex-shrink-0 border-b px-6 py-4 bg-white">
-        <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-          {title ? title : "Untitled"}
-          <div className="cursor-pointer">
-            <FaPen className="text-lg ms-3" />
-          </div>
-        </h2>
+        {!isEditing ? (
+          <>
+            <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+              {title ? title : "Untitled"}
+              <div className="cursor-pointer">
+                <FaPen className="text-sm ms-3" onClick={handleEditTitle} />
+              </div>
+            </h2>
+          </>
+        ) : (
+          <>
+            <h2 className="text-xl font-semibold  text-gray-800 flex items-center">
+              <input
+                className="border p-1 "
+                type="text"
+                value={editedTitle}
+                onChange={(e) => {
+                  setEditedTitle(e.target.value);
+                }}
+              />
+              <div className="cursor-pointer">
+                <MdOutlineDone
+                  className="text-2xl ms-3"
+                  onClick={saveEditTitle}
+                />
+              </div>
+            </h2>
+          </>
+        )}
       </div>
 
       {/* Chat Messages - Scrollable Area */}
@@ -267,7 +323,7 @@ export default function MainChat() {
             </button>
           </div>
         )}
-        <form className="flex space-x-2" onSubmit={handleSubmit}>
+        <form className="flex space-x-2 items-center" onSubmit={handleSubmit}>
           <input
             type="text"
             placeholder="Type your message..."
@@ -276,6 +332,28 @@ export default function MainChat() {
             disabled={loading}
             className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
+          {/* Voice input button UI */}
+          <button
+            type="button"
+            className="bg-gray-100 text-orange-600 p-2 rounded-full hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-500 transition flex items-center justify-center"
+            title="Record voice message (UI only)"
+            tabIndex={-1}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 18.75v1.5m0 0h3.375m-3.375 0H8.625M12 18.75A6.75 6.75 0 005.25 12V8.25a6.75 6.75 0 1113.5 0V12a6.75 6.75 0 01-6.75 6.75z"
+              />
+            </svg>
+          </button>
           <button
             type="submit"
             disabled={loading}
@@ -284,6 +362,9 @@ export default function MainChat() {
             {loading ? "Thinking..." : "Send"}
           </button>
         </form>
+        <p className="text-xs text-gray-500 mt-2 text-center">
+          Aina is designed for supportive conversations, not medical advice.
+        </p>
       </div>
     </div>
   );

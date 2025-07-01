@@ -154,10 +154,58 @@ const getSingleConversation = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+const editChatTitle = async (req, res) => {
+  try {
+    const conversationId = req.params.id;
+    const editedTitle = req.body.title;
+
+    if (!editedTitle || !editedTitle.trim()) {
+      return res.status(400).json({ message: "Title is Required" });
+    }
+    const conversation = await Conversation.findOne({
+      _id: conversationId,
+      userId: req.user.id,
+    });
+    if (!conversation) {
+      return res.status(400).josn({ message: "Conversation not found" });
+    }
+    //update the title
+    conversation.title = editedTitle;
+    await conversation.save();
+
+    res
+      .status(200)
+      .json({ message: "Title updated sucessfully", conversation });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const deleteSingleConversation = async (req, res) => {
+  try {
+    const conversationId = req.params.id;
+    const conversation = await Conversation.findOne({
+      _id: conversationId,
+      userId: req.user.id,
+    });
+    if (!conversation) {
+      return res.status(400).json({ message: "Chat not found" });
+    }
+    const deleteChat = await Conversation.findByIdAndDelete(conversationId);
+    if (!deleteChat) {
+      return res.status(400).json({ message: "Chat not found" });
+    }
+    res.status(200).json({ message: "Chat Deleted Sucessfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
 
 module.exports = {
   createConversation,
   sendMessage,
   getConversation,
   getSingleConversation,
+  editChatTitle,
+  deleteSingleConversation,
 };

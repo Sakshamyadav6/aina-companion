@@ -24,7 +24,7 @@ const AinaChat = () => {
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col md:flex-row overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-full md:w-1/4 bg-white border-r overflow-y-auto">
+        <aside className="w-full md:w-1/5 bg-white border-r overflow-y-auto">
           <SideBar />
         </aside>
 
