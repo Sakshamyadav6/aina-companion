@@ -1,13 +1,18 @@
 import React from "react";
+import { FiMenu } from "react-icons/fi";
 
-export default function TopBar() {
+export default function TopBar({ onToggleSidebar }) {
   return (
     <header className="w-full bg-white border-b shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo or App Name */}
-        <h1 className="text-2xl font-bold text-orange-600 tracking-tight">
+        <h1 className="text-2xl hidden md:block font-bold text-orange-600 tracking-tight">
           Aina
         </h1>
+        {/* Hamburger button dispay on small screens */}
+        <button className="md:hidden rounded hover:bg-gray-100">
+          <FiMenu className="text-2xl" onClick={onToggleSidebar} />
+        </button>
 
         {/* User Avatar / Profile */}
         <div className="flex items-center space-x-3">

@@ -4,6 +4,7 @@ import MainChat from "../components/Chat/MainChat";
 import { useSelector } from "react-redux";
 import { createChat } from "../../services/axios.service";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const AinaChat = () => {
   const { token, id } = useSelector((state) => state.auth);
@@ -24,7 +25,7 @@ const AinaChat = () => {
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col md:flex-row overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-full md:w-1/5 bg-white border-r overflow-y-auto">
+        <aside className="w-full md:w-1/4 bg-white border-r overflow-y-auto">
           <SideBar />
         </aside>
 

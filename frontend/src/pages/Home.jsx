@@ -1,11 +1,13 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FiArrowRight,
   FiMessageSquare,
   FiMic,
   FiLock,
   FiBook,
+  FiSun,
+  FiMoon,
 } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
@@ -34,12 +36,53 @@ const features = [
 ];
 
 const Home = () => {
+  // Theme state
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("theme") || "light"
+  );
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white text-gray-900 antialiased min-h-screen">
+    <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-100 antialiased min-h-screen transition-colors duration-500">
+      {/* Theme Toggle Button */}
+      <button
+        className="fixed top-4 right-4 z-50 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-700 rounded-full p-2 shadow hover:scale-110 transition-all"
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        aria-label="Toggle theme"
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {theme === "dark" ? (
+            <motion.span
+              key="sun"
+              initial={{ rotate: -90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: 90, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <FiSun className="w-6 h-6 text-orange-400" />
+            </motion.span>
+          ) : (
+            <motion.span
+              key="moon"
+              initial={{ rotate: 90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: -90, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <FiMoon className="w-6 h-6 text-gray-700" />
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </button>
+
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative flex flex-col lg:flex-row items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-32 gap-12">
+      <section className="relative flex flex-col lg:flex-row items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 lg:py-28 gap-12">
         {/* Text Content */}
         <motion.div
           className="w-full lg:w-1/2 space-y-6"
@@ -49,12 +92,12 @@ const Home = () => {
         >
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
             Your Personal{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500 dark:from-orange-400 dark:to-pink-600">
               AI Therapy
             </span>{" "}
             Companion
           </h1>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl">
+          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl">
             A safe space to explore your thoughts, track your mood, and grow
             with compassionate AI support.
           </p>
@@ -62,14 +105,14 @@ const Home = () => {
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
               <Link
                 to="/login"
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-3.5 rounded-lg shadow hover:shadow-lg transition-all duration-300 font-medium"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 dark:from-orange-400 dark:to-pink-600 text-white px-6 py-3.5 rounded-lg shadow hover:shadow-lg transition-all duration-300 font-medium"
               >
                 Get Started <FiArrowRight className="w-5 h-5" />
               </Link>
             </motion.div>
             <motion.a
               href="#features"
-              className="inline-flex items-center justify-center gap-2 border border-gray-300 bg-white text-gray-700 px-6 py-3.5 rounded-lg hover:bg-gray-50 transition-all duration-300 font-medium"
+              className="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 px-6 py-3.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-medium"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -86,8 +129,8 @@ const Home = () => {
           transition={{ type: "spring", stiffness: 60, delay: 0.2 }}
         >
           <div className="relative w-full max-w-md aspect-square">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-100 to-pink-100 rounded-[2rem] rotate-6"></div>
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-50 to-pink-50 rounded-[2rem] -rotate-3"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-100 to-pink-100 dark:from-orange-900 dark:to-pink-900 rounded-[2rem] rotate-6"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-50 to-pink-50 dark:from-orange-950 dark:to-pink-950 rounded-[2rem] -rotate-3"></div>
             <img
               src="/icon.png"
               alt="Aina AI Companion"
@@ -98,7 +141,10 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-16 md:py-24 lg:py-32 bg-white">
+      <section
+        id="features"
+        className="py-12 md:py-20 lg:py-28 bg-white dark:bg-gray-900 transition-colors duration-500"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <motion.h2
@@ -109,12 +155,12 @@ const Home = () => {
               viewport={{ once: true }}
             >
               Thoughtful Features for{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500 dark:from-orange-400 dark:to-pink-600">
                 Your Wellbeing
               </span>
             </motion.h2>
             <motion.p
-              className="text-lg text-gray-600"
+              className="text-lg text-gray-600 dark:text-gray-300"
               initial={{ y: 20, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -129,18 +175,18 @@ const Home = () => {
             {features.map((f, i) => (
               <motion.div
                 key={f.title}
-                className="bg-gray-50 p-6 rounded-xl border border-gray-200 hover:border-transparent hover:shadow-lg transition-all duration-300 group"
+                className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-transparent hover:shadow-lg transition-all duration-300 group"
                 initial={{ y: 40, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 viewport={{ once: true, margin: "-50px" }}
                 whileHover={{ y: -5 }}
               >
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-100 to-pink-100 flex items-center justify-center text-orange-500 mb-4 group-hover:from-orange-200 group-hover:to-pink-200 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-100 to-pink-100 dark:from-orange-900 dark:to-pink-900 flex items-center justify-center text-orange-500 dark:text-orange-300 mb-4 group-hover:from-orange-200 group-hover:to-pink-200 dark:group-hover:from-orange-800 dark:group-hover:to-pink-800 transition-all">
                   {f.icon}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{f.title}</h3>
-                <p className="text-gray-600">{f.desc}</p>
+                <p className="text-gray-600 dark:text-gray-300">{f.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -148,26 +194,26 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-r from-orange-50 to-pink-50">
+      <section className="py-12 md:py-20 bg-gradient-to-r from-orange-50 to-pink-50 dark:from-orange-900 dark:to-pink-900 transition-colors duration-500">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="bg-white p-8 md:p-10 rounded-2xl shadow-lg"
+            className="bg-white dark:bg-gray-900 p-8 md:p-10 rounded-2xl shadow-lg"
           >
             <h2 className="text-2xl sm:text-3xl font-bold mb-4">
               Ready to Begin Your Journey?
             </h2>
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
               Join thousands who've found support through compassionate AI
               conversations.
             </p>
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
               <Link
                 to="/login"
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white px-8 py-4 rounded-lg shadow hover:shadow-lg transition-all duration-300 font-medium"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 dark:from-orange-400 dark:to-pink-600 text-white px-8 py-4 rounded-lg shadow hover:shadow-lg transition-all duration-300 font-medium"
               >
                 Start Talking Now <FiArrowRight className="w-5 h-5" />
               </Link>

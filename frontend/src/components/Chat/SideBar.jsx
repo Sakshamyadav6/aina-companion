@@ -15,7 +15,7 @@ import {
   getChat,
   deleteChat,
 } from "../../../services/axios.service";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
 export default function SideBar() {
   const { id, token } = useSelector((state) => state.auth);
@@ -83,7 +83,9 @@ export default function SideBar() {
     <div className="h-full flex flex-col ">
       {/* Header */}
       <div className="flex-shrink-0 px-6 py-4 border-b bg-white">
-        <h2 className="text-xl font-bold text-orange-600">Aina</h2>
+        <h2 className="text-xl font-bold text-orange-600">
+          <Link to={"/"}>Aina</Link>
+        </h2>
       </div>
 
       {/* Search Bar */}
