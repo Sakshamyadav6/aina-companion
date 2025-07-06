@@ -34,7 +34,7 @@ export default function MainChat() {
     if (!messagesContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } =
       messagesContainerRef.current;
-    const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+    const isAtBottom = scrollHeight - scrollTop - clientHeight < 10;
     setUserScrolled(!isAtBottom);
   };
 
