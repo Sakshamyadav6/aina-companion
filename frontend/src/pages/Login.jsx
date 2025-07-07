@@ -120,7 +120,7 @@ const Login = () => {
               className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200 mb-4"
             >
               <FiArrowLeft className="h-4 w-4" />
-              Back to home
+              Back to  
             </Link>
 
             <motion.h1
