@@ -277,8 +277,9 @@ export default function MainChat() {
   const handleStopListening = () => {
     SpeechRecognition.stopListening();
     console.log(transcript);
-    setPrompt(transcript);
     setIsListening(false);
+
+    setPrompt(transcript);
   };
   return (
     <div className="flex flex-col h-full">
