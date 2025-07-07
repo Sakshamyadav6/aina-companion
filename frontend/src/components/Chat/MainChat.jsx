@@ -1,6 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
-import { FaPen, FaCopy, FaCheck, FaReply, FaTimes } from "react-icons/fa";
+import {
+  FaPen,
+  FaCopy,
+  FaCheck,
+  FaReply,
+  FaTimes,
+  FaStop,
+} from "react-icons/fa";
 import { useSelector } from "react-redux";
 import {
   editTitle,
@@ -9,6 +16,10 @@ import {
 } from "../../../services/axios.service";
 import { useParams } from "react-router-dom";
 import { MdOutlineDone } from "react-icons/md";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
+import { CiStop1 } from "react-icons/ci";
 
 export default function MainChat() {
   const [title, setTitle] = useState("");
@@ -25,6 +36,7 @@ export default function MainChat() {
   const [userScrolled, setUserScrolled] = useState(false);
   const [editedTitle, setEditedTitle] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [isListening, setIsListening] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -254,6 +266,20 @@ export default function MainChat() {
     }
   };
 
+  const { listening, transcript, resetTranscript } = useSpeechRecognition();
+  //voice message prompt
+  const handleVoice = () => {
+    resetTranscript();
+    SpeechRecognition.startListening({ continuous: true });
+    setIsListening(true);
+  };
+  //handle stop listening
+  const handleStopListening = () => {
+    SpeechRecognition.stopListening();
+    console.log(transcript);
+    setPrompt(transcript);
+    setIsListening(false);
+  };
   return (
     <div className="flex flex-col h-full">
       {/* Chat Header */}
@@ -323,45 +349,69 @@ export default function MainChat() {
             </button>
           </div>
         )}
-        <form className="flex space-x-2 items-center" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Type your message..."
-            onChange={(e) => setPrompt(e.target.value)}
-            value={prompt}
-            disabled={loading}
-            className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
-          {/* Voice input button UI */}
-          <button
-            type="button"
-            className="bg-gray-100 text-orange-600 p-2 rounded-full hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-500 transition flex items-center justify-center"
-            title="Record voice message (UI only)"
-            tabIndex={-1}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
+        {isListening ? (
+          <>
+            <div className="flex justify-center items-center ">
+              <h2 className="text-2xl font-bold text-orange-500">
+                Listening....
+              </h2>
+              <button
+                className="ms-2 text-orange-600 rounded-full bg-gray-100 p-2 hover:bg-orange-200 focus:ring-2 focus:ring-orange-500"
+                onClick={handleStopListening}
+                title="Stop speaking"
+              >
+                <CiStop1 className="text-2xl" />
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <form
+              className="flex space-x-2 items-center"
+              onSubmit={handleSubmit}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 18.75v1.5m0 0h3.375m-3.375 0H8.625M12 18.75A6.75 6.75 0 005.25 12V8.25a6.75 6.75 0 1113.5 0V12a6.75 6.75 0 01-6.75 6.75z"
+              <input
+                type="text"
+                placeholder="Type your message..."
+                onChange={(e) => setPrompt(e.target.value)}
+                value={prompt}
+                disabled={loading}
+                className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
-            </svg>
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-orange-600 text-white px-4 py-2 rounded-full hover:bg-orange-700 transition disabled:opacity-50"
-          >
-            {loading ? "Thinking..." : "Send"}
-          </button>
-        </form>
+              {/* Voice input button UI */}
+              <button
+                type="button"
+                className="bg-gray-100 text-orange-600 p-2 rounded-full hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-500 transition flex items-center justify-center"
+                title="Record voice message (UI only)"
+                tabIndex={-1}
+                onClick={handleVoice}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 18.75v1.5m0 0h3.375m-3.375 0H8.625M12 18.75A6.75 6.75 0 005.25 12V8.25a6.75 6.75 0 1113.5 0V12a6.75 6.75 0 01-6.75 6.75z"
+                  />
+                </svg>
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-orange-600 text-white px-4 py-2 rounded-full hover:bg-orange-700 transition disabled:opacity-50"
+              >
+                {loading ? "Thinking..." : "Send"}
+              </button>
+            </form>
+          </>
+        )}
+
         <p className="text-xs text-gray-500 mt-2 text-center">
           Aina is designed for supportive conversations, not medical advice.
         </p>
