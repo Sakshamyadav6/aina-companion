@@ -1,17 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FiMenu, FiX, FiSun, FiMoon } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import ThemeToggleButton from "./ThemeToggleButton";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem("theme") || "light"
-  );
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem("theme", theme);
-  }, [theme]);
 
   const navLinks = [
     { name: "About", href: "#about" },
@@ -52,35 +45,13 @@ const Navbar = () => {
               Get Started
             </Link>
             {/* Theme Toggle Button */}
-            <button
-              className="ml-2 p-2 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label="Toggle theme"
-              tabIndex={0}
-            >
-              {theme === "dark" ? (
-                <FiSun className="w-5 h-5 text-orange-400" />
-              ) : (
-                <FiMoon className="w-5 h-5 text-gray-700" />
-              )}
-            </button>
+            <ThemeToggleButton className="ml-2" />
           </div>
 
           {/* Mobile menu button and theme toggle */}
           <div className="md:hidden flex items-center">
             {/* Theme Toggle Button (mobile) */}
-            <button
-              className="mr-2 p-2 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label="Toggle theme"
-              tabIndex={0}
-            >
-              {theme === "dark" ? (
-                <FiSun className="w-5 h-5 text-orange-400" />
-              ) : (
-                <FiMoon className="w-5 h-5 text-gray-700" />
-              )}
-            </button>
+            <ThemeToggleButton className="mr-2" />
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-colors duration-300"

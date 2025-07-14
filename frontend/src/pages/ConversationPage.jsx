@@ -13,7 +13,7 @@ const ConversationPage = () => {
         {/* Sidebar */}
         <aside
           className={`
-            fixed inset-y-0 left-0 z-20 w-64 bg-white border-r transform
+            fixed inset-y-0 left-0 z-20 w-64 bg-white dark:bg-gray-800 border-r dark:border-gray-700 transform
             transition-transform duration-300 ease-in-out
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
             md:relative md:translate-x-0 md:w-1/4 md:block
@@ -30,7 +30,7 @@ const ConversationPage = () => {
         )}
 
         {/* Main */}
-        <div className="w-full md:w-3/4 bg-gray-50 flex flex-col h-full">
+        <div className="w-full md:w-3/4 bg-gray-50 dark:bg-gray-900 flex flex-col h-full transition-colors duration-500">
           <MainChat />
         </div>
       </div>

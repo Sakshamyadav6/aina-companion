@@ -11,6 +11,7 @@ import {
 } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import { registerUser } from "../../services/axios.service";
+import { errorToast, successToast } from "../../services/toast.service";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,12 +34,11 @@ const Register = () => {
     try {
       const response = await registerUser("api/auth/register", formData);
       console.log(response);
+      successToast(`Welcome OnBoard ${response.user.name}`);
     } catch (error) {
       console.log(error);
+      errorToast(error.response.data.message);
     }
-
-    // Handle registration logic here
-    // console.log("Registration submitted:", formData);
   };
 
   // Animation variants
@@ -66,7 +66,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-500">
       <Navbar />
       <motion.div
         className="flex flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8"
@@ -126,7 +126,7 @@ const Register = () => {
           </motion.div>
 
           <motion.div
-            className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100"
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-gray-700 transition-colors duration-500"
             variants={item}
             whileHover={{
               boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
@@ -137,7 +137,7 @@ const Register = () => {
                 <motion.div variants={item}>
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
                   >
                     Full Name
                   </label>
@@ -152,7 +152,7 @@ const Register = () => {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
                       placeholder="Your name"
                       whileFocus={{
                         backgroundColor: "rgba(255, 255, 255, 1)",
@@ -165,7 +165,7 @@ const Register = () => {
                 <motion.div variants={item}>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
                   >
                     Email Address
                   </label>
@@ -180,7 +180,7 @@ const Register = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
                       placeholder="your@email.com"
                       whileFocus={{
                         backgroundColor: "rgba(255, 255, 255, 1)",
@@ -193,7 +193,7 @@ const Register = () => {
                 <motion.div variants={item}>
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
                   >
                     Password
                   </label>
@@ -208,7 +208,7 @@ const Register = () => {
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+                      className="block w-full pl-10 pr-10 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
                       placeholder="••••••••"
                       whileFocus={{
                         backgroundColor: "rgba(255, 255, 255, 1)",
@@ -228,7 +228,7 @@ const Register = () => {
                       )}
                     </motion.button>
                   </div>
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     Minimum 8 characters with at least one number
                   </p>
                 </motion.div>
@@ -250,7 +250,7 @@ const Register = () => {
             </form>
 
             <motion.div
-              className="mt-6 text-center text-sm text-gray-600"
+              className="mt-6 text-center text-sm text-gray-600 dark:text-gray-300"
               variants={item}
             >
               <p>

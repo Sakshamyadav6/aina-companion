@@ -82,21 +82,21 @@ export default function SideBar() {
   return (
     <div className="h-full flex flex-col ">
       {/* Header */}
-      <div className="flex-shrink-0 px-6 py-4 border-b bg-white">
+      <div className="flex-shrink-0 px-6 py-4 border-b bg-white dark:bg-gray-800 dark:border-gray-700 transition-colors duration-500">
         <h2 className="text-xl font-bold text-orange-600">
           <Link to={"/"}>Aina</Link>
         </h2>
       </div>
 
       {/* Search Bar */}
-      <div className="px-6 py-3 bg-white border-b flex items-center space-x-2">
+      <div className="px-6 py-3 bg-white dark:bg-gray-800 border-b dark:border-gray-700 flex items-center space-x-2 transition-colors duration-500">
         <FiSearch className="text-gray-400 text-lg" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search chats..."
-          className="flex-1 bg-transparent outline-none text-sm text-gray-700"
+          className="flex-1 bg-transparent outline-none text-sm text-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded transition-colors duration-500 px-2 py-1"
         />
       </div>
 
@@ -180,15 +180,15 @@ export default function SideBar() {
       </nav>
 
       {/* Logout */}
-      <div className="flex-shrink-0 border-t p-4 bg-white">
+      <div className="flex-shrink-0 border-t p-4 bg-white dark:bg-gray-800 dark:border-gray-700 transition-colors duration-500">
         <a
           href="#settings"
-          className="flex items-center space-x-2 text-gray-600 hover:text-red-500 transition w-full px-2 py-2"
+          className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 transition w-full px-2 py-2"
         >
           <FiSettings className="text-lg" />
           <span>Settings</span>
         </a>
-        <button className="flex items-center space-x-2 text-gray-600 hover:text-red-500 transition w-full px-2">
+        <button className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 transition w-full px-2">
           <FiLogOut />
           <span>Logout</span>
         </button>

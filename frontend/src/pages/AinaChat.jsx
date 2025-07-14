@@ -28,7 +28,7 @@ const AinaChat = () => {
         {/* Sidebar */}
         <aside
           className={`
-            fixed inset-y-0 left-0 z-20 w-64 bg-white border-r transform
+            fixed inset-y-0 left-0 z-20 w-64 bg-white dark:bg-gray-800 border-r dark:border-gray-700 transform
             transition-transform duration-300 ease-in-out
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
             md:relative md:translate-x-0 md:w-1/4 md:block
@@ -45,12 +45,12 @@ const AinaChat = () => {
         )}
 
         {/* Main */}
-        <main className="w-full md:w-3/4 bg-gray-50 flex flex-col h-full">
+        <main className="w-full md:w-3/4 bg-gray-50 dark:bg-gray-900 flex flex-col h-full transition-colors duration-500">
           <div className="h-full flex flex-col items-center justify-center text-center">
-            <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+            <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-100 mb-4">
               Start a New Conversation
             </h2>
-            <p className="text-gray-500 mb-6">
+            <p className="text-gray-500 dark:text-gray-300 mb-6">
               Select an existing chat from the sidebar or create a new one.
             </p>
             <button

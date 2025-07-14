@@ -13,6 +13,7 @@ import {
   editTitle,
   getSingleChat,
   handleResponse,
+  playVoice,
 } from "../../../services/axios.service";
 import { useParams } from "react-router-dom";
 import { MdOutlineDone } from "react-icons/md";
@@ -28,15 +29,17 @@ export default function MainChat() {
   const { conversationId } = useParams();
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
+  const prevChatLengthRef = useRef(0);
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState(null);
   const [replyTo, setReplyTo] = useState(null);
-  const [messageReactions, setMessageReactions] = useState({});
   const [userScrolled, setUserScrolled] = useState(false);
   const [editedTitle, setEditedTitle] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [recordText, setRecordText] = useState("");
+  const [aiResponse, setAIResponse] = useState("");
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -71,10 +74,12 @@ export default function MainChat() {
   }, [conversationId, token]);
 
   useEffect(() => {
-    if (!userScrolled) {
+    // Only scroll to bottom if a new message is added (not on every keystroke)
+    if (chat.length > prevChatLengthRef.current && !userScrolled) {
       scrollToBottom();
     }
-  }, [chat]);
+    prevChatLengthRef.current = chat.length;
+  }, [chat, userScrolled]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -178,19 +183,21 @@ export default function MainChat() {
         } mb-4 group`}
       >
         <div
-          className={`rounded-lg px-4 py-2 text-gray-800 max-w-[75%] shadow-sm text-reveal relative
+          className={`rounded-lg px-4 py-2 max-w-[75%] shadow-sm text-reveal relative transition-colors duration-500
             ${
               isUser
-                ? "bg-orange-100 border border-orange-200"
-                : "bg-white border border-gray-200"
+                ? "bg-orange-100 dark:bg-orange-900 border border-orange-200 dark:border-orange-700 text-gray-900 dark:text-orange-100"
+                : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
             }`}
         >
           <span>{message.content}</span>
           {isTyping && (
-            <span className="inline-block w-0.5 h-4 bg-gray-600 ml-1 typing-cursor"></span>
+            <span className="inline-block w-0.5 h-4 bg-gray-600 dark:bg-gray-300 ml-1 typing-cursor"></span>
           )}
           {isThinking && (
-            <span className="ml-2 text-xs text-gray-400">Thinking...</span>
+            <span className="ml-2 text-xs text-gray-400 dark:text-gray-300">
+              Thinking...
+            </span>
           )}
 
           {/* Actions: Copy, Reply */}
@@ -198,21 +205,21 @@ export default function MainChat() {
             <div className="absolute top-2 right-2 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={() => copyMessage(message.content, index)}
-                className="p-1 rounded-full hover:bg-gray-100"
+                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
                 title="Copy message"
               >
                 {copiedIndex === index ? (
-                  <FaCheck className="text-green-500 text-xs" />
+                  <FaCheck className="text-green-500 dark:text-green-400 text-xs" />
                 ) : (
-                  <FaCopy className="text-gray-400 text-xs hover:text-gray-600" />
+                  <FaCopy className="text-gray-400 dark:text-gray-300 text-xs hover:text-gray-600 dark:hover:text-gray-100" />
                 )}
               </button>
               <button
                 onClick={() => handleReply(message)}
-                className="p-1 rounded-full hover:bg-gray-100"
+                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
                 title="Reply to message"
               >
-                <FaReply className="text-gray-400 text-xs hover:text-gray-600" />
+                <FaReply className="text-gray-400 dark:text-gray-300 text-xs hover:text-gray-600 dark:hover:text-gray-100" />
               </button>
             </div>
           )}
@@ -279,15 +286,49 @@ export default function MainChat() {
     console.log(transcript);
     setIsListening(false);
 
-    setPrompt(transcript);
+    // setPrompt(transcript);
+    setRecordText(transcript.trim());
+
+    // textToVoice();
   };
+  useEffect(() => {
+    let data = { conversationId, message: recordText };
+    const getResponse = async () => {
+      try {
+        const response = await handleResponse("api/chat/send", token, data);
+        console.log(response.data.response);
+        setAIResponse(response.data.response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getResponse();
+  }, [recordText]);
+  useEffect(() => {
+    const textToVoice = async () => {
+      try {
+        const response = await playVoice(
+          "https://api.elevenlabs.io/v1/text-to-speech",
+          import.meta.env.VITE_ELEVEN_VOICE_ID,
+          import.meta.env.VITE_ELEVEN_LABS,
+          aiResponse
+        );
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    textToVoice();
+  }, [aiResponse]);
+
   return (
     <div className="flex flex-col h-full">
       {/* Chat Header */}
-      <div className="flex-shrink-0 border-b px-6 py-4 bg-white">
+      <div className="flex-shrink-0 border-b px-6 py-4 bg-white dark:bg-gray-800 dark:border-gray-700 transition-colors duration-500">
         {!isEditing ? (
           <>
-            <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 flex items-center">
               {title ? title : "Untitled"}
               <div className="cursor-pointer">
                 <FaPen className="text-sm ms-3" onClick={handleEditTitle} />
@@ -296,9 +337,9 @@ export default function MainChat() {
           </>
         ) : (
           <>
-            <h2 className="text-xl font-semibold  text-gray-800 flex items-center">
+            <h2 className="text-xl font-semibold  text-gray-800 dark:text-gray-100 flex items-center">
               <input
-                className="border p-1 "
+                className="border p-1 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
                 type="text"
                 value={editedTitle}
                 onChange={(e) => {
@@ -318,7 +359,7 @@ export default function MainChat() {
 
       {/* Chat Messages - Scrollable Area */}
       <div
-        className="flex-1 overflow-y-auto px-4 py-6 bg-gray-50 space-y-4 min-h-0"
+        className="flex-1 overflow-y-auto px-4 py-6 bg-gray-50 dark:bg-gray-900 space-y-4 min-h-0"
         ref={messagesContainerRef}
         onScroll={handleScroll}
       >
@@ -327,15 +368,15 @@ export default function MainChat() {
       </div>
 
       {/* Message Input - Fixed at Bottom */}
-      <div className="flex-shrink-0 border-t p-4 bg-white">
+      <div className="flex-shrink-0 border-t p-4 bg-white dark:bg-gray-800 dark:border-gray-700 transition-colors duration-500">
         {/* Reply Preview */}
         {replyTo && (
-          <div className="mb-3 p-3 bg-orange-50 border-l-4 border-orange-500 rounded-lg flex items-center justify-between">
+          <div className="mb-3 p-3 bg-orange-50 dark:bg-orange-900 border-l-4 border-orange-500 dark:border-orange-600 rounded-lg flex items-center justify-between transition-colors duration-500">
             <div className="flex-1">
-              <div className="text-sm font-medium text-orange-800 mb-1">
+              <div className="text-sm font-medium text-orange-800 dark:text-orange-200 mb-1">
                 Replying to {replyTo.role === "user" ? "your message" : "Aina"}
               </div>
-              <div className="text-sm text-orange-700 truncate">
+              <div className="text-sm text-orange-700 dark:text-orange-100 truncate">
                 {replyTo.content.length > 100
                   ? replyTo.content.substring(0, 100) + "..."
                   : replyTo.content}
@@ -343,7 +384,7 @@ export default function MainChat() {
             </div>
             <button
               onClick={clearReply}
-              className="ml-2 p-1 text-orange-600 hover:text-orange-800 transition-colors"
+              className="ml-2 p-1 text-orange-600 dark:text-orange-300 hover:text-orange-800 dark:hover:text-orange-400 transition-colors"
               title="Cancel reply"
             >
               <FaTimes className="text-sm" />
@@ -377,12 +418,12 @@ export default function MainChat() {
                 onChange={(e) => setPrompt(e.target.value)}
                 value={prompt}
                 disabled={loading}
-                className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
               />
               {/* Voice input button UI */}
               <button
                 type="button"
-                className="bg-gray-100 text-orange-600 p-2 rounded-full hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-500 transition flex items-center justify-center"
+                className="bg-gray-100 text-orange-600 p-2 rounded-full hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-500 transition flex items-center justify-center dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-orange-900"
                 title="Record voice message (UI only)"
                 tabIndex={-1}
                 onClick={handleVoice}
@@ -405,7 +446,7 @@ export default function MainChat() {
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-orange-600 text-white px-4 py-2 rounded-full hover:bg-orange-700 transition disabled:opacity-50"
+                className="bg-orange-600 text-white px-4 py-2 rounded-full hover:bg-orange-700 transition disabled:opacity-50 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-orange-900"
               >
                 {loading ? "Thinking..." : "Send"}
               </button>

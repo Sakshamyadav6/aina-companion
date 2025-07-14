@@ -13,6 +13,7 @@ import Navbar from "../components/Navbar";
 import { loginUser } from "../../services/axios.service";
 import { useDispatch } from "react-redux";
 import { login } from "../slice/authSlice";
+import { errorToast, successToast } from "../../services/toast.service";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -46,9 +47,11 @@ const Login = () => {
         id: response.user.id,
       };
       dispatch(login(data));
+      successToast(`Welcome back ${response.user.name}`);
       navigate("/chat");
     } catch (error) {
       console.log(error);
+      errorToast(error.data.message);
     }
   };
 
@@ -77,7 +80,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-500">
       <Navbar />
 
       <motion.div
@@ -120,7 +123,7 @@ const Login = () => {
               className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200 mb-4"
             >
               <FiArrowLeft className="h-4 w-4" />
-              Back to  
+              Back to
             </Link>
 
             <motion.h1
@@ -138,7 +141,7 @@ const Login = () => {
           </motion.div>
 
           <motion.div
-            className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100"
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-gray-700 transition-colors duration-500"
             variants={item}
             whileHover={{
               boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
@@ -149,7 +152,7 @@ const Login = () => {
                 <motion.div variants={item}>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
                   >
                     Email Address
                   </label>
@@ -164,7 +167,7 @@ const Login = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
                       placeholder="your@email.com"
                       whileFocus={{
                         backgroundColor: "rgba(255, 255, 255, 1)",
@@ -177,7 +180,7 @@ const Login = () => {
                 <motion.div variants={item}>
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
                   >
                     Password
                   </label>
@@ -192,7 +195,7 @@ const Login = () => {
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+                      className="block w-full pl-10 pr-10 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
                       placeholder="••••••••"
                       whileFocus={{
                         backgroundColor: "rgba(255, 255, 255, 1)",
@@ -223,12 +226,12 @@ const Login = () => {
                       id="remember-me"
                       name="remember-me"
                       type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-700 text-orange-500 focus:ring-orange-500 bg-white dark:bg-gray-900"
                       whileTap={{ scale: 0.9 }}
                     />
                     <label
                       htmlFor="remember-me"
-                      className="ml-2 block text-sm text-gray-700"
+                      className="ml-2 block text-sm text-gray-700 dark:text-gray-200"
                     >
                       Remember me
                     </label>
@@ -264,10 +267,10 @@ const Login = () => {
             <motion.div className="mt-6" variants={item}>
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200" />
+                  <div className="w-full border-t border-gray-200 dark:border-gray-700" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
+                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-300">
                     Or continue with
                   </span>
                 </div>
@@ -280,7 +283,7 @@ const Login = () => {
                 <motion.div variants={item}>
                   <motion.button
                     type="button"
-                    className="w-full flex items-center justify-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                    className="w-full flex items-center justify-center py-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800"
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -291,7 +294,7 @@ const Login = () => {
                 <motion.div variants={item}>
                   <motion.button
                     type="button"
-                    className="w-full flex items-center justify-center py-2 px-4 border border-gray-200 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                    className="w-full flex items-center justify-center py-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800"
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -302,7 +305,7 @@ const Login = () => {
             </motion.div>
 
             <motion.div
-              className="mt-6 text-center text-sm text-gray-600"
+              className="mt-6 text-center text-sm text-gray-600 dark:text-gray-300"
               variants={item}
             >
               <p>

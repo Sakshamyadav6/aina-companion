@@ -7,7 +7,7 @@ export const registerUser = async (uri, data) => {
     );
     return response.data;
   } catch (error) {
-    console.log(error.response);
+    throw error;
   }
 };
 export const loginUser = async (uri, data) => {
@@ -117,6 +117,43 @@ export const deleteChat = async (uri, id, token) => {
     );
     return response;
   } catch (error) {
+    throw error;
+  }
+};
+export const playVoice = async (uri, voiceId, key, text) => {
+  if (!text) {
+    console.error("Cannot synthesize empty text!");
+    return;
+  }
+
+  try {
+    const response = await axios.post(
+      `${uri}/${voiceId}`,
+      {
+        text: text,
+        voice_settings: {
+          stability: 0.2,
+          similarity_boost: 0.95,
+        },
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "xi-api-key": key,
+        },
+        responseType: "blob", // Important for audio data
+      }
+    );
+    console.log(response);
+
+    // Create audio URL
+    const audioUrl = URL.createObjectURL(response.data);
+    const audio = new Audio(audioUrl);
+    audio.play();
+
+    return audio;
+  } catch (error) {
+    console.error("Error in playVoice:", error.response?.data || error);
     throw error;
   }
 };
