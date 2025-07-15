@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const authRoute = require("./routes/authRoutes");
 const cors = require("cors");
 const chatRoute = require("./routes/chatRoutes");
+const tssRoute = require("./routes/tssRoutes");
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(cors());
 
 app.use("/api/auth", authRoute);
 app.use("/api/chat", chatRoute);
+app.use("/api/tts", tssRoute);
 
 //default route
 app.get("/", (req, res) => {

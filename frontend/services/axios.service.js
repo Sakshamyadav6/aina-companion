@@ -120,7 +120,7 @@ export const deleteChat = async (uri, id, token) => {
     throw error;
   }
 };
-export const playVoice = async (uri, voiceId, key, text) => {
+export const playVoice = async (uri, token, text) => {
   if (!text) {
     console.error("Cannot synthesize empty text!");
     return;
@@ -128,26 +128,25 @@ export const playVoice = async (uri, voiceId, key, text) => {
 
   try {
     const response = await axios.post(
-      `${uri}/${voiceId}`,
+      `${import.meta.env.VITE_SERVER_URL}/${uri}`,
       {
         text: text,
-        voice_settings: {
-          stability: 0.2,
-          similarity_boost: 0.95,
-        },
       },
       {
         headers: {
-          "Content-Type": "application/json",
-          "xi-api-key": key,
+          Authorization: `Bearer ${token} `,
         },
-        responseType: "blob", // Important for audio data
       }
     );
     console.log(response);
 
     // Create audio URL
-    const audioUrl = URL.createObjectURL(response.data);
+    const audioBase = response.data.audio;
+    const audioBlob = new Blob([
+      Uint8Array.from(atob(audioBase), (c) => c.charCodeAt(0)),
+      { type: "audio/mp3" },
+    ]);
+    const audioUrl = URL.createObjectURL(audioBlob);
     const audio = new Audio(audioUrl);
     audio.play();
 

@@ -308,12 +308,7 @@ export default function MainChat() {
   useEffect(() => {
     const textToVoice = async () => {
       try {
-        const response = await playVoice(
-          "https://api.elevenlabs.io/v1/text-to-speech",
-          import.meta.env.VITE_ELEVEN_VOICE_ID,
-          import.meta.env.VITE_ELEVEN_LABS,
-          aiResponse
-        );
+        const response = await playVoice("api/tts/generate", token, aiResponse);
         console.log(response);
       } catch (error) {
         console.log(error);
