@@ -9,13 +9,14 @@ import {
   FiTrash2,
   FiShare2,
 } from "react-icons/fi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   createChat,
   getChat,
   deleteChat,
 } from "../../../services/axios.service";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { logout } from "../../slice/authSlice";
 
 export default function SideBar() {
   const { id, token } = useSelector((state) => state.auth);
@@ -24,6 +25,8 @@ export default function SideBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(null);
+
+  const dispatch = useDispatch();
 
   const handleCreateChat = async () => {
     try {
@@ -78,6 +81,13 @@ export default function SideBar() {
       .join("")
       .toUpperCase()
       .slice(0, 2);
+
+  //handle logout
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(logout());
+    navigate("/login");
+  };
 
   return (
     <div className="h-full flex flex-col ">
@@ -188,7 +198,10 @@ export default function SideBar() {
           <FiSettings className="text-lg" />
           <span>Settings</span>
         </a>
-        <button className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 transition w-full px-2">
+        <button
+          className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 transition w-full px-2"
+          onClick={handleLogout}
+        >
           <FiLogOut />
           <span>Logout</span>
         </button>

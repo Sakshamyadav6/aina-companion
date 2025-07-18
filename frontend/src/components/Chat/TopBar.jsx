@@ -2,6 +2,7 @@ import React from "react";
 import { FiMenu } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import ThemeToggleButton from "../ThemeToggleButton";
+import { Link } from "react-router-dom";
 
 export default function TopBar({ onToggleSidebar }) {
   const user = useSelector((state) => state.auth);
@@ -17,7 +18,7 @@ export default function TopBar({ onToggleSidebar }) {
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo or App Name */}
         <h1 className="text-2xl hidden md:block font-bold text-orange-600 tracking-tight">
-          Aina
+          <Link to="/">Aina</Link>
         </h1>
         {/* Hamburger button dispay on small screens */}
         <button

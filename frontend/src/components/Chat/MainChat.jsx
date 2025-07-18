@@ -40,6 +40,7 @@ export default function MainChat() {
   const [isListening, setIsListening] = useState(false);
   const [recordText, setRecordText] = useState("");
   const [aiResponse, setAIResponse] = useState("");
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -308,10 +309,12 @@ export default function MainChat() {
   useEffect(() => {
     const textToVoice = async () => {
       try {
+        setIsSpeaking(true);
         const response = await playVoice("api/tts/generate", token, aiResponse);
         console.log(response);
       } catch (error) {
         console.log(error);
+        setIsSpeaking(false);
       }
     };
     textToVoice();
