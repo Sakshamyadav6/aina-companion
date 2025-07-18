@@ -8,8 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Can use windows too if needed
-
+    runs-on: ubuntu-latest
     permissions:
       contents: read
 
@@ -26,21 +25,20 @@ jobs:
           cd backend
           npm install
 
-      - name: Zip backend for deployment
+      - name: Zip backend folder
         run: |
           cd backend
-          zip -r backend.zip .
+          zip -r ../release.zip .
 
-      - name: Upload backend artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: backend-app
-          path: backend/backend.zip
+          name: node-app
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
-
     permissions:
       id-token: write
       contents: read
@@ -49,19 +47,19 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: backend-app
+          name: node-app
 
       - name: Unzip artifact
-        run: unzip backend.zip
+        run: unzip release.zip
 
-      - name: Azure Login
+      - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_FA885F60F2B04D5EA9755ABD10D2A4EA }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BB2F05F0C31A4097A9B7D0F392CC1148 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E3F5EDEEC7DC41ECA5DABBE94DE34352 }}
 
-      - name: Deploy backend to Azure Web App
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'aina-companion'
