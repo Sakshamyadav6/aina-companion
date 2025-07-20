@@ -1,16 +1,46 @@
-import React, { useState } from "react";
-import { FiMenu, FiX, FiSun, FiMoon } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { FiMenu, FiX } from "react-icons/fi";
+import { Link, useLocation } from "react-router-dom";
 import ThemeToggleButton from "./ThemeToggleButton";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const navLinks = [
-    { name: "About", href: "#about" },
-    { name: "Features", href: "#features" },
-    { name: "Contact", href: "#contact" },
+    { name: "About", href: "/about" },
+    { name: "Features", href: "/features" },
+    { name: "Contact", href: "/contact" },
   ];
+
+  // Lock scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  // Close mobile menu on resize to desktop
+  const handleResize = useCallback(() => {
+    if (window.innerWidth >= 768) {
+      setIsOpen(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [handleResize]);
 
   return (
     <nav className="w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 fixed top-0 z-50 transition-colors duration-500">
@@ -28,14 +58,14 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
+                to={link.href}
                 className="text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 transition-colors duration-300 font-medium text-base lg:text-lg px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
                 tabIndex={0}
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
             <Link
               to="/login"
@@ -68,30 +98,46 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation & Backdrop */}
+      {/* Backdrop */}
       <div
-        className={`md:hidden fixed inset-0 top-16 bg-white/95 dark:bg-gray-900/95 shadow-lg transition-colors duration-500 ${
+        className={`md:hidden fixed inset-0 top-0 bg-black/40 transition-opacity duration-300 ${
           isOpen ? "block" : "hidden"
+        }`}
+        style={{ zIndex: 48 }}
+        aria-hidden={!isOpen}
+        onClick={() => setIsOpen(false)}
+      />
+      {/* Mobile Menu */}
+      <div
+        className={`md:hidden fixed left-0 right-0 top-0 h-screen bg-white/95 dark:bg-gray-900/95 shadow-lg transition-transform duration-300 ${
+          isOpen ? "translate-y-0" : "-translate-y-full"
         }`}
         style={{ zIndex: 49 }}
         aria-hidden={!isOpen}
       >
-        <div className="px-4 pt-6 pb-8 space-y-3 flex flex-col">
+        {/* Close Button */}
+        <button
+          onClick={() => setIsOpen(false)}
+          className="absolute top-4 right-4 p-2 rounded-md text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white/80 dark:bg-gray-900/80 shadow"
+          aria-label="Close menu"
+        >
+          <FiX className="h-6 w-6" />
+        </button>
+        <div className="pt-20 px-4 pb-8 space-y-3 flex flex-col min-h-[calc(100vh-4rem)]">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.name}
-              href={link.href}
+              to={link.href}
               className="block px-3 py-3 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
-              onClick={() => setIsOpen(false)}
               tabIndex={isOpen ? 0 : -1}
             >
               {link.name}
-            </a>
+            </Link>
           ))}
           <Link
             to="/login"
             className="block w-full text-center px-3 py-3 rounded-md text-base font-medium text-white bg-gradient-to-r from-orange-500 to-pink-500 dark:from-orange-400 dark:to-pink-600 shadow hover:shadow-md transition-all duration-300 mt-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-            onClick={() => setIsOpen(false)}
             tabIndex={isOpen ? 0 : -1}
           >
             Get Started

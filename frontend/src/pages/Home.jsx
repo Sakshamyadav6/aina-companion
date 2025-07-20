@@ -2,38 +2,14 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiArrowRight,
-  FiMessageSquare,
-  FiMic,
-  FiLock,
-  FiBook,
   FiSun,
   FiMoon,
+  FiUsers,
+  FiShield,
+  FiHeart,
 } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
-
-const features = [
-  {
-    icon: <FiMessageSquare className="w-6 h-6" />,
-    title: "AI-Powered Chat",
-    desc: "Real-time, empathetic conversations powered by advanced AI.",
-  },
-  {
-    icon: <FiMic className="w-6 h-6" />,
-    title: "Voice Interaction",
-    desc: "Natural voice conversations with seamless switching between modes.",
-  },
-  {
-    icon: <FiLock className="w-6 h-6" />,
-    title: "Secure & Private",
-    desc: "End-to-end encryption ensures your data remains confidential.",
-  },
-  {
-    icon: <FiBook className="w-6 h-6" />,
-    title: "Session History",
-    desc: "Track your progress and reflect on your emotional journey.",
-  },
-];
 
 const Home = () => {
   // Theme state
@@ -47,7 +23,7 @@ const Home = () => {
   }, [theme]);
 
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-100 antialiased min-h-screen transition-colors duration-500 md:pt-0 pt-12 md:text-start text-center ">
+    <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-100 antialiased min-h-screen transition-colors duration-500 md:pt-0 pt-12 md:text-start text-center">
       {/* Theme Toggle Button */}
       <button
         className="fixed top-4 right-4 z-50 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-700 rounded-full p-2 shadow hover:scale-110 transition-all"
@@ -99,7 +75,8 @@ const Home = () => {
           </h1>
           <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl">
             A safe space to explore your thoughts, track your mood, and grow
-            with compassionate AI support.
+            with compassionate AI support. Experience real-time conversations
+            that understand and support your mental wellbeing.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
@@ -110,14 +87,14 @@ const Home = () => {
                 Get Started <FiArrowRight className="w-5 h-5" />
               </Link>
             </motion.div>
-            <motion.a
-              href="#features"
-              className="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 px-6 py-3.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-medium"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Learn More
-            </motion.a>
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+              <Link
+                to="/features"
+                className="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 px-6 py-3.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-medium"
+              >
+                Learn More
+              </Link>
+            </motion.div>
           </div>
         </motion.div>
 
@@ -140,11 +117,8 @@ const Home = () => {
         </motion.div>
       </section>
 
-      {/* Features Section */}
-      <section
-        id="features"
-        className="py-12 md:py-20 lg:py-28 bg-white dark:bg-gray-900 transition-colors duration-500"
-      >
+      {/* Key Benefits Section */}
+      <section className="py-12 md:py-20 bg-white dark:bg-gray-900 transition-colors duration-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <motion.h2
@@ -154,9 +128,9 @@ const Home = () => {
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
-              Thoughtful Features for{" "}
+              Why Choose{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500 dark:from-orange-400 dark:to-pink-600">
-                Your Wellbeing
+                Aina
               </span>
             </motion.h2>
             <motion.p
@@ -166,29 +140,62 @@ const Home = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
             >
-              Designed to support your mental health journey with care and
-              innovation.
+              Experience the future of mental health support with our innovative
+              AI companion.
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((f, i) => (
-              <motion.div
-                key={f.title}
-                className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-transparent hover:shadow-lg transition-all duration-300 group"
-                initial={{ y: 40, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                whileHover={{ y: -5 }}
-              >
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-100 to-pink-100 dark:from-orange-900 dark:to-pink-900 flex items-center justify-center text-orange-500 dark:text-orange-300 mb-4 group-hover:from-orange-200 group-hover:to-pink-200 dark:group-hover:from-orange-800 dark:group-hover:to-pink-800 transition-all">
-                  {f.icon}
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{f.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300">{f.desc}</p>
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div
+              className="text-center"
+              initial={{ y: 40, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-orange-100 to-pink-100 dark:from-orange-900 dark:to-pink-900 flex items-center justify-center">
+                <FiUsers className="w-8 h-8 text-orange-500 dark:text-orange-300" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Always Available</h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                24/7 support whenever you need someone to talk to, without
+                judgment or waiting.
+              </p>
+            </motion.div>
+
+            <motion.div
+              className="text-center"
+              initial={{ y: 40, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-orange-100 to-pink-100 dark:from-orange-900 dark:to-pink-900 flex items-center justify-center">
+                <FiShield className="w-8 h-8 text-orange-500 dark:text-orange-300" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Completely Private</h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Your conversations are encrypted and secure, ensuring your
+                privacy is protected.
+              </p>
+            </motion.div>
+
+            <motion.div
+              className="text-center"
+              initial={{ y: 40, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-orange-100 to-pink-100 dark:from-orange-900 dark:to-pink-900 flex items-center justify-center">
+                <FiHeart className="w-8 h-8 text-orange-500 dark:text-orange-300" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Empathetic Support</h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                AI trained to understand emotions and provide compassionate,
+                helpful responses.
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -208,16 +215,32 @@ const Home = () => {
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
               Join thousands who've found support through compassionate AI
-              conversations.
+              conversations. Start your mental health journey today.
             </p>
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-              <Link
-                to="/login"
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 dark:from-orange-400 dark:to-pink-600 text-white px-8 py-4 rounded-lg shadow hover:shadow-lg transition-all duration-300 font-medium"
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Start Talking Now <FiArrowRight className="w-5 h-5" />
-              </Link>
-            </motion.div>
+                <Link
+                  to="/login"
+                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 dark:from-orange-400 dark:to-pink-600 text-white px-8 py-4 rounded-lg shadow hover:shadow-lg transition-all duration-300 font-medium"
+                >
+                  Start Talking Now <FiArrowRight className="w-5 h-5" />
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Link
+                  to="/about"
+                  className="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 px-8 py-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-medium"
+                >
+                  Learn About Us
+                </Link>
+              </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>
