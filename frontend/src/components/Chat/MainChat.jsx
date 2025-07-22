@@ -41,6 +41,8 @@ export default function MainChat() {
   const [recordText, setRecordText] = useState("");
   const [aiResponse, setAIResponse] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [audio, setAudio] = useState(null);
+  const [isThinking, setIsThinking] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -286,12 +288,12 @@ export default function MainChat() {
     SpeechRecognition.stopListening();
     console.log(transcript);
     setIsListening(false);
-
-    // setPrompt(transcript);
+    setIsThinking(true);
     setRecordText(transcript.trim());
 
     // textToVoice();
   };
+  //send message to backend to get response for voice
   useEffect(() => {
     let data = { conversationId, message: recordText };
     const getResponse = async () => {
@@ -306,12 +308,23 @@ export default function MainChat() {
 
     getResponse();
   }, [recordText]);
+  //get the voice and create audio file
   useEffect(() => {
     const textToVoice = async () => {
       try {
-        setIsSpeaking(true);
         const response = await playVoice("api/tts/generate", token, aiResponse);
         console.log(response);
+        const audioURL = URL.createObjectURL(response);
+        setIsThinking(false);
+
+        setIsSpeaking(true);
+
+        const audio = new Audio(audioURL);
+        setAudio(audio);
+        audio.play();
+        audio.onended = () => {
+          setIsSpeaking(false);
+        };
       } catch (error) {
         console.log(error);
         setIsSpeaking(false);
@@ -319,6 +332,14 @@ export default function MainChat() {
     };
     textToVoice();
   }, [aiResponse]);
+
+  const handleStopAISpeaking = () => {
+    console.log(audio);
+    if (audio) {
+      audio.pause();
+      setIsSpeaking(false);
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -399,6 +420,29 @@ export default function MainChat() {
                 className="ms-2 text-orange-600 rounded-full bg-gray-100 p-2 hover:bg-orange-200 focus:ring-2 focus:ring-orange-500"
                 onClick={handleStopListening}
                 title="Stop speaking"
+              >
+                <CiStop1 className="text-2xl" />
+              </button>
+            </div>
+          </>
+        ) : isThinking ? (
+          <>
+            <div className="flex justify-center items-center ">
+              <h2 className="text-2xl font-bold text-orange-500">
+                Thinking....
+              </h2>
+            </div>
+          </>
+        ) : isSpeaking ? (
+          <>
+            <div className="flex justify-center items-center ">
+              <h2 className="text-2xl font-bold text-orange-500">
+                Speaking....
+              </h2>
+              <button
+                className="ms-2 text-orange-600 rounded-full bg-gray-100 p-2 hover:bg-orange-200 focus:ring-2 focus:ring-orange-500"
+                onClick={handleStopAISpeaking}
+                title="Stop AINA"
               >
                 <CiStop1 className="text-2xl" />
               </button>

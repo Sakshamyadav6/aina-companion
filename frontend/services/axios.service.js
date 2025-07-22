@@ -146,11 +146,11 @@ export const playVoice = async (uri, token, text) => {
       Uint8Array.from(atob(audioBase), (c) => c.charCodeAt(0)),
       { type: "audio/mp3" },
     ]);
-    const audioUrl = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrl);
-    audio.play();
+    // const audioUrl = URL.createObjectURL(audioBlob);
+    // const audio = new Audio(audioUrl);
+    // audio.play();
 
-    return audio;
+    return audioBlob;
   } catch (error) {
     console.error("Error in playVoice:", error.response?.data || error);
     throw error;
