@@ -1,4 +1,4 @@
-name: Deploy Node.js backend only
+name: Deploy Node.js backend to Azure Web App - ainai
 
 on:
   push:
@@ -7,59 +7,31 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
-      - name: Install backend dependencies
-        working-directory: ./backend
-        run: npm install
-
-      - name: Zip backend for deployment
-        run: zip -r release.zip . -x '*.git*'
-        working-directory: ./backend
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: node-app
-          path: backend/release.zip
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: node-app
-
-      - name: Unzip artifact
-        run: unzip release.zip
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_XXXXXXXXXX }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_XXXXXXXXXX }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_XXXXXXXXXX }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2869D402CC0A4F2CBFE055D664C12733 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_17A7D49AD74C4D1FB62DF64FE54BF0B9 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A8D6A8DA0EA74E93B07A119873C3A30C }}
 
-      - name: Deploy to Azure Web App
+      - name: Deploy backend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'ainai'
+          app-name: 'ainai'                     # 👈 Your App Service name
           slot-name: 'Production'
-          package: .
+          package: './backend'                  # 👈 Only deploy the backend folder
