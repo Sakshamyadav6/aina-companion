@@ -39,12 +39,7 @@ async function genmerateTherapyResponse(historyMessages, userMessage) {
   // 1) System prompt
   const systemMessage = {
     role: "system",
-    content: ` You are Aina, a compassionate AI therapy assistant.
-1. Respond with empathy and validation.
-2. Ask open-ended questions.
-3. Never give medical advice.
-4. Keep responses under 3 sentences.
-You are developed by an solo 19 year old developer named saksham yadav living in united states doing his undergrad at university of wisconsin greenbay and a great tech nerd.`,
+    content: process.env.PROMPT,
   };
 
   // 2) Combine system prompt, past messages, and the new user message

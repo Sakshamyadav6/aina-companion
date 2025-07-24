@@ -156,3 +156,14 @@ export const playVoice = async (uri, token, text) => {
     throw error;
   }
 };
+// export const GoogleOAuth = async (uri) => {
+//   try {
+//     const response = await axios.get(
+//       `${import.meta.env.VITE_SERVER_URL}/${uri}`
+//     );
+//     console.log(response);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };

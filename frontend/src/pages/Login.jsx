@@ -79,6 +79,19 @@ const Login = () => {
     },
   };
 
+  const handleOAuthGoogle = async () => {
+    try {
+      const response =
+        ((window.location.href = "http://localhost:5000/api/auth/google"),
+        "_self");
+
+      console.log(response);
+
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-500">
       <Navbar />
@@ -286,6 +299,7 @@ const Login = () => {
                     className="w-full flex items-center justify-center py-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800"
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.98 }}
+                    onClick={handleOAuthGoogle}
                   >
                     Google
                   </motion.button>

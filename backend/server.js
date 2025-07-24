@@ -5,6 +5,9 @@ const authRoute = require("./routes/authRoutes");
 const cors = require("cors");
 const chatRoute = require("./routes/chatRoutes");
 const tssRoute = require("./routes/tssRoutes");
+const passport = require("passport");
+const session = require("express-session");
+require("./config/passport");
 
 dotenv.config();
 
@@ -15,8 +18,29 @@ connectDB();
 
 app.use(express.json());
 
-app.use(cors());
+// 1. Session middleware FIRST
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // true only with HTTPS
+  })
+);
 
+// 2. Passport middleware NEXT
+app.use(passport.initialize());
+app.use(passport.session());
+
+// 3. CORS (if needed)
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
+// 4. THEN your routes
 app.use("/api/auth", authRoute);
 app.use("/api/chat", chatRoute);
 app.use("/api/tts", tssRoute);

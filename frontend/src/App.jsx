@@ -8,6 +8,7 @@ import ConversationPage from "./pages/ConversationPage";
 import About from "./pages/About";
 import Feature from "./pages/Feature";
 import Contact from "./pages/Contact";
+import OAuthSuccess from "./components/OAuthSuccess";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/chat" element={<AinaChat />} />
         <Route path="/chat/:conversationId" element={<ConversationPage />} />
+        <Route path="/oauth-success" element={<OAuthSuccess />} />
       </Routes>
     </>
   );
