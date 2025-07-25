@@ -35,10 +35,7 @@ app.use(passport.session());
 // 3. CORS (if needed)
 app.use(
   cors({
-    origin: [
-      process.env.CLIENT_URL || "http://localhost:5173",
-      "https://ainai.vercel.app",
-    ],
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
