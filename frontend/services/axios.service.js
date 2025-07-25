@@ -42,7 +42,7 @@ export const createChat = async (uri, token, userId) => {
 export const getChat = async (uri, token, userId) => {
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_SERVER_URL}/${uri}/${userId}`,
+      `${import.meta.env.VITE_SERVER_URL}${uri}/${userId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
