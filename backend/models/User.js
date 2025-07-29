@@ -22,6 +22,14 @@ const userSchema = new mongoose.Schema(
       minLength: [8, "Password should be 8 characters long"],
       select: false, // it prevenmts exposing the password to other queries by default
     },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows multiple null values
+    },
+    avatar: {
+      type: String,
+    },
     image: {
       type: String,
       default:

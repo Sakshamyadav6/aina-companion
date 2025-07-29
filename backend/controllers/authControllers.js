@@ -8,7 +8,7 @@ const registerUser = async (req, res) => {
     //check user exists
     const user = await User.findOne({ email });
     if (user) {
-      res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "User already exists" });
     }
     //salt and hash password
     const salt = await bcrypt.genSalt(10); //10=costfactor
@@ -48,12 +48,12 @@ const loginUser = async (req, res) => {
 
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      res.status(400).json({ message: "Invalid Email or Password" });
+      return res.status(400).json({ message: "Invalid Email or Password" });
     }
     //compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      res.status(400).json({ message: "Invalid Password" });
+      return res.status(400).json({ message: "Invalid Password" });
     }
     //jwt token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
