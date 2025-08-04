@@ -9,6 +9,7 @@ import About from "./pages/About";
 import Feature from "./pages/Feature";
 import Contact from "./pages/Contact";
 import OAuthSuccess from "./components/OAuthSuccess";
+import SecureRoutes from "./routes/SecureRoutes";
 
 function App() {
   return (
@@ -20,8 +21,11 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/chat" element={<AinaChat />} />
-        <Route path="/chat/:conversationId" element={<ConversationPage />} />
+        {/* secure routing */}
+        <Route element={<SecureRoutes />}>
+          <Route path="/chat" element={<AinaChat />} />
+          <Route path="/chat/:conversationId" element={<ConversationPage />} />
+        </Route>
         <Route path="/oauth-success" element={<OAuthSuccess />} />
       </Routes>
     </>

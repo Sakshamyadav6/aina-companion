@@ -14,7 +14,7 @@ const OAuthSuccess = () => {
 
     if (token) {
       axios
-        .get("http://localhost:5000/api/auth/me", {
+        .get("http://localhost:3000/api/auth/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
